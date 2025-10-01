@@ -1,0 +1,24 @@
+{
+  "name": "on-scroll-shape-morph-nuxt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@studio-freight/lenis": "^1.0.41",
+    "gsap": "^3.12.5",
+    "imagesloaded": "^5.0.0",
+    "nuxt": "^3.12.4",
+    "splitting": "^1.0.6"
+  },
+  "devDependencies": {
+    "@types/imagesloaded": "^4.1.6",
+    "@types/node": "^20.12.12",
+    "sass": "^1.77.6",
+    "typescript": "~5.4.0"
+  }
+}

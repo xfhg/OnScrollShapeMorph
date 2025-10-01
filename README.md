@@ -1,31 +1,36 @@
-# On-Scroll Shape Morph
+# On-Scroll Shape Morph (Nuxt)
 
-A demo of a on-scroll shape morph animations with an interactive tilt effect.
+This repository provides a Nuxt drop-in component that recreates the Codrops “On-Scroll Shape Morph” demo using modern Vue composition patterns together with GSAP, ScrollTrigger, Lenis smooth scrolling and Splitting for the staggered text animations.
 
 ![On-Scroll Shape Morph](https://tympanus.net/codrops/wp-content/uploads/2023/11/ShapeMorph-1.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=74333)
+## Getting started
 
-[Demo](http://tympanus.net/Development/OnScrollShapeMorph/)
+```bash
+npm install
+npm run dev
+```
 
-## Installation
+Visit `http://localhost:3000` to explore the example page (`pages/index.vue`) that mounts the `<ScrollMorph />` component.
 
-Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server).
+## Using the component in another Nuxt app
+
+1. Copy `components/ScrollMorph.vue` and the `assets/css/base.css` stylesheet into your project.
+2. Add the CSS file (and `splitting/dist/splitting.css`) to the `css` array of your `nuxt.config`.
+3. Ensure the static assets from `public/img` and `public/fonts` are available (or adjust the image/font paths to your own assets).
+4. Install the required dependencies:
+
+   ```bash
+   npm install gsap @studio-freight/lenis imagesloaded splitting
+   ```
+
+5. Drop `<ScrollMorph />` into any page to enable the effect.
 
 ## Credits
 
-- Images generated with [Midjourney](https://midjourney.com)
-
-## Misc
-
-Follow Codrops: [Twitter](http://www.twitter.com/codrops), [Facebook](http://www.facebook.com/codrops), [GitHub](https://github.com/codrops), [Instagram](https://www.instagram.com/codropsss/)
+- Original concept and assets by [Codrops](https://tympanus.net/).
+- Images generated with [Midjourney](https://midjourney.com).
 
 ## License
+
 [MIT](LICENSE)
-
-Made with :blue_heart:  by [Codrops](http://www.codrops.com)
-
-
-
-
-
