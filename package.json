@@ -9,7 +9,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@studio-freight/lenis": "^1.0.41",
+    "lenis": "^1.3.11",
     "gsap": "^3.12.5",
     "imagesloaded": "^5.0.0",
     "nuxt": "^3.12.4",
