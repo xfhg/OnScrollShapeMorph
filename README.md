@@ -18,11 +18,7 @@ Visit `http://localhost:3000` to explore the example page (`pages/index.vue`) th
 1. Copy `components/ScrollMorph.vue` and the `assets/css/base.css` stylesheet into your project.
 2. Add the CSS file (and `splitting/dist/splitting.css`) to the `css` array of your `nuxt.config`.
 3. Ensure the static assets from `public/img` and `public/fonts` are available (or adjust the image/font paths to your own assets).
-4. Install the required dependencies:
-
-   ```bash
-   npm install gsap @studio-freight/lenis imagesloaded splitting
-   ```
+4. Install the required dependencies from `./package.json`
 
 5. Drop `<ScrollMorph />` into any page to enable the effect.
 
