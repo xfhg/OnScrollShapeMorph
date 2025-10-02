@@ -3,7 +3,7 @@
     <div class="frame">
       <h1 class="frame__title">On-Scroll Shape Morph</h1>
       <a class="frame__back" href="https://tympanus.net/codrops/?p=74333" target="_blank" rel="noopener">Back to the article</a>
-      <a class="frame__prev" href="https://tympanus.net/Development/PixelGooeyTooltip" target="_blank" rel="noopener">Previous demo</a>
+      <a class="frame__prev" href="https://tympanus.net/codrops/demos/" target="_blank" rel="noopener">All demos</a>
     </div>
 
     <div class="intro">
@@ -41,7 +41,12 @@
           </div>
         </div>
         <p class="content__text" :class="section.text.className">
-          <span v-for="(line, lineIdx) in section.text.lines" :key="lineIdx" v-html="line" />
+          <span
+            v-for="(line, lineIdx) in section.text.lines"
+            :key="lineIdx"
+            :class="line.className"
+            :data-splitting="line.splitting ? '' : null"
+          >{{ line.text }}</span>
         </p>
       </section>
     </div>
@@ -71,6 +76,12 @@ import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 
+interface TextLine {
+  text: string;
+  className?: string;
+  splitting?: boolean;
+}
+
 interface SectionContent {
   id: string;
   image: {
@@ -80,7 +91,7 @@ interface SectionContent {
   };
   text: {
     className: string;
-    lines: string[];
+    lines: TextLine[];
   };
 }
 
@@ -108,7 +119,10 @@ const sections: SectionContent[] = [
     },
     text: {
       className: 'content__text--center content__text--large',
-      lines: ['<span>Obey the silence</span>', '<span>Rebel in shadows</span>']
+      lines: [
+        { text: 'Obey the silence', splitting: true },
+        { text: 'Rebel in shadows', splitting: true }
+      ]
     }
   },
   {
@@ -120,7 +134,10 @@ const sections: SectionContent[] = [
     },
     text: {
       className: 'content__text--left',
-      lines: ['<span>From Thrones to Chains</span>', '<span>Surrender of Sovereignty</span>']
+      lines: [
+        { text: 'From Thrones to Chains' },
+        { text: 'Surrender of Sovereignty' }
+      ]
     }
   },
   {
@@ -133,8 +150,13 @@ const sections: SectionContent[] = [
     text: {
       className: 'content__text--left',
       lines: [
-        '<span>You make me dream </span><span>Your dreams</span>',
-        '<span class="content__text-tiny">Do you ever dream of a dream so real it makes you question reality? What is reality? Do you question it? Turn off the light switch. Does it turn off? Question right now: is it a dream? You always wake up once you realize it\'s a dream. So, don\'t wake up. Realize it\'s a dream. That\'s how you enter the real world.</span>'
+        { text: 'You make me dream ' },
+        { text: 'Your dreams' },
+        {
+          text:
+            "Do you ever dream of a dream so real it makes you question reality? What is reality? Do you question it? Turn off the light switch. Does it turn off? Question right now: is it a dream? You always wake up once you realize it's a dream. So, don't wake up. Realize it's a dream. That's how you enter the real world.",
+          className: 'content__text-tiny'
+        }
       ]
     }
   },
@@ -147,7 +169,10 @@ const sections: SectionContent[] = [
     },
     text: {
       className: 'content__text--center',
-      lines: ['<span>Your Willingness is</span>', '<span>Collective Triumph</span>']
+      lines: [
+        { text: 'Your Willingness is' },
+        { text: 'Collective Triumph' }
+      ]
     }
   },
   {
@@ -159,7 +184,10 @@ const sections: SectionContent[] = [
     },
     text: {
       className: 'content__text--left',
-      lines: ['<span>Controlling my feelings</span>', '<span>for too long</span>']
+      lines: [
+        { text: 'Controlling my feelings' },
+        { text: 'for too long' }
+      ]
     }
   },
   {
@@ -170,7 +198,10 @@ const sections: SectionContent[] = [
     },
     text: {
       className: 'content__text--center',
-      lines: ['<span>You were never truly loved</span>', '<span>You have only been betrayed</span>']
+      lines: [
+        { text: 'You were never truly loved' },
+        { text: 'You have only been betrayed' }
+      ]
     }
   }
 ];
