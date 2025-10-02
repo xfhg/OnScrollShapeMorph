@@ -461,71 +461,106 @@ const createFx2 = (itemElement: HTMLElement, options?: ScrollSettings) => {
 
 const createFx3 = (itemElement: HTMLElement, options?: ScrollSettings) => {
   const settings = setupAnimationDefaults(itemElement, options);
+  const wrapper = itemElement.querySelector<HTMLElement>('.content__img-wrap');
+  if (!wrapper) throw new Error('Missing .content__img-wrap');
   const imageElement = itemElement.querySelector<HTMLElement>('.content__img');
   if (!imageElement) throw new Error('Missing .content__img');
   const innerElements = imageElement.querySelectorAll<HTMLElement>('.content__img-inner');
+  if (innerElements.length < 2) throw new Error('Missing .content__img-inner');
   const text = itemElement.querySelector<HTMLElement>('.content__text');
+  if (!text) throw new Error('Missing .content__text');
 
-  return gsap.timeline({
-    defaults: { ease: 'none' },
-    onStart: () => {
-      if (settings.perspective) {
-        gsap.set([imageElement, itemElement], { perspective: settings.perspective });
-      }
+  const originalOnEnter = settings.scrollTrigger?.onEnter;
+  const originalOnEnterBack = settings.scrollTrigger?.onEnterBack;
+  const originalOnLeave = settings.scrollTrigger?.onLeave;
+  const originalOnLeaveBack = settings.scrollTrigger?.onLeaveBack;
+  const originalOnRefresh = settings.scrollTrigger?.onRefresh;
+  let targetScale = 1;
+
+  const updateMeasurements = () => {
+    const rect = imageElement.getBoundingClientRect();
+    const currentScale = Number(gsap.getProperty(imageElement, 'scale')) || 1;
+    const naturalWidth = rect.width / currentScale;
+    const naturalHeight = rect.height / currentScale;
+
+    if (!naturalWidth || !naturalHeight) {
+      targetScale = 1;
+      return;
+    }
+
+    targetScale = Math.max(window.innerWidth / naturalWidth, window.innerHeight / naturalHeight);
+    if (!Number.isFinite(targetScale) || targetScale < 1) {
+      targetScale = 1;
+    }
+  };
+
+  updateMeasurements();
+
+  const scrollTriggerConfig: ScrollTrigger.Vars = {
+    ...settings.scrollTrigger,
+    onEnter: (self) => {
+      originalOnEnter?.call(self, self);
+      updateMeasurements();
+      gsap.set(wrapper, { zIndex: 2 });
+      gsap.set(imageElement, { transformOrigin: '50% 50%' });
     },
-    scrollTrigger: settings.scrollTrigger
-  })
-    .fromTo(imageElement, {
-      scale: 0.3,
+    onEnterBack: (self) => {
+      originalOnEnterBack?.call(self, self);
+      updateMeasurements();
+      gsap.set(wrapper, { zIndex: 2 });
+      gsap.set(imageElement, { transformOrigin: '50% 50%' });
+    },
+    onLeave: (self) => {
+      originalOnLeave?.call(self, self);
+      gsap.set(wrapper, { clearProps: 'zIndex' });
+    },
+    onLeaveBack: (self) => {
+      originalOnLeaveBack?.call(self, self);
+      gsap.set(wrapper, { clearProps: 'zIndex' });
+    },
+    onRefresh: () => {
+      originalOnRefresh?.();
+      updateMeasurements();
+    }
+  };
+
+  const tl = gsap.timeline({
+    defaults: { ease: 'power2.inOut' },
+    scrollTrigger: scrollTriggerConfig
+  });
+
+  tl.fromTo(imageElement, {
+      scale: 1,
       filter: 'brightness(100%) contrast(100%)',
+      borderRadius: '30px',
       clipPath: settings.clipPaths.step1.initial
     }, {
-      ease: 'sine',
-      rotationX: -35,
-      rotationY: 35,
-      filter: 'brightness(60%) contrast(400%)',
-      scale: 0.7,
+      scale: () => targetScale,
+      filter: 'brightness(130%) contrast(140%)',
+      borderRadius: '0px',
       clipPath: settings.clipPaths.step1.final
-    }, 0)
-    .to(innerElements[0], {
-      ease: 'sine',
-      skewY: 10,
-      scaleY: 1.2
     }, 0)
     .add(() => {
       innerElements[0]?.classList.toggle('content__img-inner--hidden');
       innerElements[1]?.classList.toggle('content__img-inner--hidden');
-    }, '>')
+    })
+    .addLabel('return', '>-0.2')
     .to(imageElement, {
-      ease: 'sine.in',
       startAt: { clipPath: settings.clipPaths.step2?.initial },
       clipPath: settings.clipPaths.step2?.final,
-      filter: 'brightness(100%) contrast(100%)',
       scale: 1,
-      rotationX: 0,
-      rotationY: 0
-    }, '<')
-    .to(innerElements[1], {
-      ease: 'sine.in',
-      startAt: { skewY: 10, scaleY: 2 },
-      skewY: 0,
-      scaleY: 1
-    }, '<')
+      filter: 'brightness(100%) contrast(100%)',
+      borderRadius: '30px'
+    }, 'return')
     .fromTo(text, {
       opacity: 0,
       yPercent: 40
     }, {
       opacity: 1,
       yPercent: 0
-    }, '>')
-    .to(imageElement, {
-      ease: 'sine',
-      startAt: { filter: 'brightness(100%) contrast(100%) opacity(100%)' },
-      filter: 'brightness(60%) contrast(400%) opacity(0%)',
-      rotationX: 25,
-      rotationY: 2,
-      scale: 1.2
-    }, '<');
+    }, 'return+=0.1');
+
+  return tl;
 };
 
 const createFx4 = (itemElement: HTMLElement, options?: ScrollSettings) => {
@@ -777,15 +812,15 @@ const scroll = (context: HTMLElement) => {
         clipPaths: {
           step1: {
             initial: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-            final: 'polygon(50% 0%, 50% 50%, 50% 50%, 50% 100%)'
+            final: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)'
           },
           step2: {
-            initial: 'polygon(50% 50%, 50% 0%, 50% 100%, 50% 50%)',
+            initial: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
             final: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)'
           }
         },
-        scrollTrigger: { start: 'center center', end: '+=150%', pin: true },
-        perspective: 400
+        scrollTrigger: { start: 'center center', end: '+=150%', pin: true, invalidateOnRefresh: true },
+        perspective: false
       }
     },
     {
